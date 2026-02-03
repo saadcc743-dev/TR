@@ -1,132 +1,113 @@
-// TubeRadar Pro - 2026 Final Version
-const WORKER_URL = "https://tuberadar-api.tuberadar-api.workers.dev"; 
+const WORKER_URL = "https://tuberadar-api.tuberadar-api.workers.dev";
+const ALLOWED_DOMAINS = ["saadcc743-dev.github.io", "yourblog.blogspot.com"]; 
 let isPremium = false;
 
+// 1. Domain Lock & Kill Switch
+(function() {
+    const host = window.location.hostname;
+    if (!ALLOWED_DOMAINS.some(d => host.includes(d))) {
+        document.getElementById('mainApp').style.display = 'none';
+        document.getElementById('lockScreen').style.display = 'block';
+        throw new Error("Unauthorized Domain");
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Initial data load from Cloudflare KV
     loadHourlyHarvest();
     updateSavedUI();
-    
-    // Live Pulse Animation
     setInterval(() => {
-        const c = 140 + Math.floor(Math.random() * 60);
-        const counterEl = document.getElementById('liveCount');
-        if(counterEl) counterEl.innerText = `● ${c} Radars Active`;
+        const count = 120 + Math.floor(Math.random() * 40);
+        document.getElementById('liveCount').innerText = `● ${count} Radars Active`;
     }, 8000);
 });
 
-// 1. Load Trends (The list you see when you first open the tool)
+// 2. Fetch Initial Trends
 async function loadHourlyHarvest() {
-    const container = document.getElementById('resultsContainer');
-    const updateTag = document.getElementById('updateTag');
-    
+    const tag = document.getElementById('updateTag');
     try {
-        // Fetching from Worker with cache-buster
         const res = await fetch(`${WORKER_URL}?get_harvest=true&t=${Date.now()}`);
-        if (!res.ok) throw new Error();
-        
         const data = await res.json();
-        
-        if (data && data.niches && data.niches.length > 0) {
-            updateTag.innerText = "LIVE";
-            updateTag.style.background = "#00b894";
+        if (data && data.niches) {
+            tag.innerText = "LIVE";
+            tag.style.background = "#00b894";
             renderResults(data.niches.map(n => [n]));
-        } else {
-            updateTag.innerText = "SYNCING";
-            container.innerHTML = "<p style='text-align:center;'>Gathering 2026 data... Refresh in a moment.</p>";
         }
-    } catch (e) { 
-        updateTag.innerText = "OFFLINE";
-        updateTag.style.background = "#ff7675";
-        container.innerHTML = "<p style='color:red; text-align:center;'>Radar Offline. Check connection.</p>"; 
-    }
+    } catch (e) { tag.innerText = "OFFLINE"; }
 }
 
-// 2. Universal Search Logic (The Scan Button)
+// 3. Search Logic
 window.startSearch = async function() {
-    const input = document.getElementById('keywordInput');
-    const q = input.value.trim();
+    const q = document.getElementById('keywordInput').value.trim();
     if(!q) return;
-    
     const container = document.getElementById('resultsContainer');
-    container.innerHTML = '<div style="text-align:center; padding:20px;">📡 Scanning Global Databases...</div>';
+    container.innerHTML = `<div class="radar-loader"><div class="radar-circle"></div><div style="margin-top:15px; font-size:0.8rem; color:#00b894;">SCANNING SATELLITES...</div></div>`;
     
     try {
-        // Use the Worker as a proxy to avoid CORS blocks
-        const res = await fetch(`${WORKER_URL}?q=${encodeURIComponent(q)}&cache=${Date.now()}`);
+        const res = await fetch(`${WORKER_URL}?q=${encodeURIComponent(q)}`);
         const data = await res.json();
-        
-        // Google/Firefox Suggest format: [query, [suggestions]]
-        if (data && Array.isArray(data[1]) && data[1].length > 0) {
-            const formatted = data[1].map(item => [item]);
-            renderResults(formatted);
-        } else {
-            container.innerHTML = "<p style='text-align:center; padding:20px;'>No new trends found for this keyword.</p>";
+        if (data && data[1]) {
+            setTimeout(() => renderResults(data[1].map(item => [item])), 800);
         }
-    } catch (e) { 
-        console.error("Search failed", e);
-        container.innerHTML = "<p style='color:red; text-align:center;'>Scan Failed. Try again.</p>"; 
-    }
+    } catch (e) { container.innerHTML = "<p>Connection Lost.</p>"; }
 }
 
-// 3. UI Renderer
+// 4. Render Results
 function renderResults(list) {
     const container = document.getElementById('resultsContainer');
     container.innerHTML = '';
-    
     list.forEach((item, i) => {
         const text = item[0];
-        const wordCount = text.split(' ').length;
-        
-        // Smart Grading: Longer phrases get better grades
-        let grade = wordCount >= 4 ? "A+" : (wordCount >= 3 ? "B" : "C");
-        
-        // Locking Logic (Locks A+ results for non-premium users)
+        const grade = text.split(' ').length >= 4 ? "A+" : (text.split(' ').length >= 3 ? "B" : "C");
         const isLocked = (grade === "A+" && !isPremium && i > 2);
+        const trend = grade === "A+" ? '<span class="trend-meta trend-up"><i class="fas fa-arrow-trend-up"></i> HOT</span>' : '<span class="trend-meta trend-new">NEW</span>';
 
         const div = document.createElement('div');
         div.className = 'result-item';
         div.innerHTML = `
             <div style="flex:1;">
-                <span class="trend-text" style="${isLocked ? 'filter:blur(4px);' : ''}">
-                    ${isLocked ? '••••••••••••••••' : text}
-                </span>
-                ${isLocked ? '<i class="fas fa-lock" style="margin-left:10px; color:#fdcb6e;"></i>' : ''}
+                ${trend}
+                <span style="${isLocked ? 'filter:blur(4px);' : ''}">${isLocked ? '••••••••••••' : text}</span>
             </div>
-            <div style="display:flex; align-items:center; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px;">
                 <div class="score-circle grade-${grade[0]}">${grade}</div>
-                ${!isLocked ? `<button onclick="saveGem('${text}')" class="save-btn"><i class="fas fa-plus"></i></button>` : ''}
+                ${!isLocked ? `<button onclick="saveGem('${text}')" style="background:none; border:1px solid #444; color:#aaa; cursor:pointer; border-radius:4px;">+</button>` : ''}
             </div>
         `;
         container.appendChild(div);
     });
 }
 
-// 4. Gem/Storage System
-function saveGem(t) {
+// 5. Gem Management
+window.saveGem = function(t) {
     let gems = JSON.parse(localStorage.getItem('trGems') || "[]");
-    if(!gems.includes(t)) {
-        gems.push(t);
-        localStorage.setItem('trGems', JSON.stringify(gems));
-        updateSavedUI();
-    }
+    if(!gems.includes(t)) { gems.push(t); localStorage.setItem('trGems', JSON.stringify(gems)); updateSavedUI(); }
+}
+
+window.removeGem = function(t) {
+    let gems = JSON.parse(localStorage.getItem('trGems') || "[]").filter(g => g !== t);
+    localStorage.setItem('trGems', JSON.stringify(gems));
+    updateSavedUI();
 }
 
 function updateSavedUI() {
     const list = document.getElementById('alertsList');
-    if(!list) return;
     const gems = JSON.parse(localStorage.getItem('trGems') || "[]");
-    list.innerHTML = gems.map(x => `<div class="gem-item">💎 ${x}</div>`).join('');
+    list.innerHTML = gems.map(x => `
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #333;">
+            <span style="font-size:0.85rem;">💎 ${x}</span>
+            <i class="fas fa-trash-can" onclick="removeGem('${x}')" style="color:#ff7675; cursor:pointer; font-size:0.8rem;"></i>
+        </div>
+    `).join('');
 }
 
-// 5. Ad Interaction (Premium Unlock)
-window.showRewardedAd = function() {
-    const btn = document.getElementById('unlockBtn');
-    btn.innerText = "Unlocking...";
-    setTimeout(() => {
-        isPremium = true;
-        btn.style.display = 'none';
-        alert("Premium Access Granted! Re-scanning...");
-        loadHourlyHarvest();
-    }, 2000);
+window.exportCSV = function() {
+    const gems = JSON.parse(localStorage.getItem('trGems') || "[]");
+    if(!gems.length) return alert("No gems saved!");
+    const blob = new Blob(["Niche\n" + gems.join("\n")], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'tuberadar-research.csv'; a.click();
 }
+
+window.subscribeAlert = function() { window.open("https://forms.google.com/your-form-link", "_blank"); }
+window.showRewardedAd = function() { alert("Premium Unlocked!"); isPremium = true; document.getElementById('unlockBtn').style.display='none'; loadHourlyHarvest(); }
