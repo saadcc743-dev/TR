@@ -7,11 +7,17 @@
     --danger: #ff7675;
 }
 
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
 body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: transparent;
     color: var(--text);
-    margin: 0;
     padding: 10px;
 }
 
@@ -22,6 +28,7 @@ body {
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-sizing: border-box;
 }
 
 /* Header & Badges */
@@ -48,9 +55,9 @@ button#searchBtn { background: var(--primary); border: none; padding: 0 25px; co
     border-left: 3px solid #333;
 }
 
-.trend-meta { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; font-weight: bold; margin-bottom: 5px; }
-.trend-up { color: var(--primary); }
-.trend-new { color: var(--accent); }
+/* Blur & Lock */
+.premium-blur { filter: blur(5px) !important; opacity: 0.5; pointer-events: none; user-select: none; }
+.lock-btn { background: linear-gradient(45deg, #d35400, #f39c12); border: none; color: white; width: 35px; height: 35px; border-radius: 5px; cursor: pointer; }
 
 .score-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
 .grade-A { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
@@ -75,5 +82,13 @@ button#searchBtn { background: var(--primary); border: none; padding: 0 25px; co
 .newsletter-box { background: #161d21; padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px dashed var(--primary); text-align: center; }
 .notify-btn { background: var(--primary); border: none; width: 100%; padding: 10px; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; }
 .export-btn { background: #444; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
-.gem-item:hover { background: rgba(255,255,255,0.05); }
-.premium-box { background: linear-gradient(45deg, #d35400, #f39c12); padding: 12px; text-align: center; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
+
+.saved-gem-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 8px; border-right: 2px solid var(--primary);
+}
+
+@media (max-width: 500px) {
+    .app-container { width: 100%; border-radius: 0; }
+    .result-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
