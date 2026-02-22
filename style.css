@@ -7,11 +7,13 @@
     --danger: #ff7675;
 }
 
+/* --- MOBILE SCROLL FIX --- */
 html, body {
-    overflow-x: hidden;
-    width: 100%;
+    overflow-x: hidden !important;
+    width: 100% !important;
     margin: 0;
     padding: 0;
+    position: relative;
     background-color: transparent;
 }
 
@@ -28,7 +30,7 @@ body {
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    box-sizing: border-box;
+    box-sizing: border-box; /* Crucial: Keeps padding inside the width */
 }
 
 /* Header & Badges */
@@ -40,10 +42,10 @@ header { display: flex; justify-content: space-between; align-items: center; }
 
 /* Search Box */
 .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
-input { flex: 1; padding: 12px; border-radius: 8px; border: none; background: var(--darker); color: white; outline: none; }
+input { flex: 1; padding: 12px; border-radius: 8px; border: none; background: var(--darker); color: white; outline: none; width: 100%; }
 button#searchBtn { background: var(--primary); border: none; padding: 0 25px; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-/* Result Items */
+/* Result Items & Premium Blur */
 .result-item {
     background: var(--darker);
     padding: 15px;
@@ -55,9 +57,23 @@ button#searchBtn { background: var(--primary); border: none; padding: 0 25px; co
     border-left: 3px solid #333;
 }
 
-/* Blur & Lock */
-.premium-blur { filter: blur(5px) !important; opacity: 0.5; pointer-events: none; user-select: none; }
-.lock-btn { background: linear-gradient(45deg, #d35400, #f39c12); border: none; color: white; width: 35px; height: 35px; border-radius: 5px; cursor: pointer; }
+.premium-blur { 
+    filter: blur(6px) !important; 
+    opacity: 0.5; 
+    user-select: none; 
+    pointer-events: none; 
+}
+
+.lock-btn {
+    background: linear-gradient(45deg, #d35400, #f39c12);
+    border: none;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
+}
 
 .score-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
 .grade-A { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
@@ -85,10 +101,11 @@ button#searchBtn { background: var(--primary); border: none; padding: 0 25px; co
 
 .saved-gem-item {
     display: flex; justify-content: space-between; align-items: center;
-    background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 8px; border-right: 2px solid var(--primary);
+    background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 8px;
 }
 
+/* Responsive Tweaks */
 @media (max-width: 500px) {
     .app-container { width: 100%; border-radius: 0; }
-    .result-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .result-item { flex-direction: row; align-items: center; } /* Keeps it compact on mobile */
 }
