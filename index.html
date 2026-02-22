@@ -3,57 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TubeRadar Pro | AI Niche Scanner</title>
-    <link rel="stylesheet" href="https://saadcc743-dev.github.io/TR/style.css">
+    <title>TubeRadar Pro</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
-<div id="lockScreen" style="display:none; text-align:center; margin-top:100px; color: white;">
-    <h2>⚠️ Unauthorized Domain</h2>
-    <p>This tool is locked to authorized websites only.</p>
-</div>
-
-<div class="app-container" id="mainApp">
-    <header>
-        <div class="logo">TUBE<span>RADAR</span></div>
-        <div id="updateTag" class="badge">SYNCING</div>
-    </header>
-
-    <div class="stats-bar">
-        <span id="liveCount">● 142 Radars Active</span>
-    </div>
-
-    <div class="search-box">
-        <input type="text" id="keywordInput" placeholder="Enter keyword (e.g. AI, Tech, Gaming)...">
-        <button onclick="startSearch()" id="searchBtn">SCAN</button>
-    </div>
-
-    <div id="resultsContainer">
-        <div class="loading">🛰️ Initializing Satellite Uplink...</div>
-    </div>
-
-    <div class="premium-box" id="unlockBtn" onclick="showRewardedAd()">
-        <i class="fas fa-crown"></i> UNLOCK ALL A+ NICHES
-    </div>
-
-    <div class="newsletter-box">
-        <h4><i class="fas fa-bell"></i> Never Miss a Trend</h4>
-        <p>Get top A+ niches delivered to your inbox weekly.</p>
-        <button onclick="subscribeAlert()" class="notify-btn">🔔 Set Email Alert</button>
-    </div>
-
-    <div class="saved-section">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-            <h3><i class="fas fa-gem"></i> Saved Gems</h3>
-            <button onclick="exportCSV()" class="export-btn">
-                <i class="fas fa-download"></i> CSV
-            </button>
+    <div class="app-container">
+        <div class="tool-header">
+            <div class="logo-area">
+                <i class="fas fa-satellite-dish" style="color:var(--primary)"></i>
+                <span style="font-weight:800; margin-left:8px;">TUBE<span style="color:var(--primary)">RADAR</span></span>
+            </div>
+            <div id="liveCount" class="status-pill">● 214 Radars Active</div>
         </div>
-        <div id="alertsList"></div>
-    </div>
-</div>
 
-<script src="https://saadcc743-dev.github.io/TR/script.js"></script>
+        <div class="search-box">
+            <input type="text" id="keywordInput" placeholder="Enter Niche (e.g. AI, Cooking)...">
+            <button id="searchBtn" onclick="window.startSearch()">SCAN</button>
+        </div>
+
+        <div id="resultsContainer">
+            <div class="empty-state">
+                <i class="fas fa-search" style="font-size: 2rem; opacity: 0.2;"></i>
+                <p>Enter a keyword to start scanning</p>
+            </div>
+        </div>
+
+        <div class="saved-section">
+            <h3 style="font-size: 0.8rem; letter-spacing: 1px; color: #666; margin-bottom: 15px;">SAVED RESEARCH</h3>
+            <div id="alertsList"></div>
+            <button class="export-btn" onclick="window.exportCSV()">EXPORT DATA (.CSV)</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
