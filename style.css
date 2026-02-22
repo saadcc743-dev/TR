@@ -7,225 +7,87 @@
     --danger: #ff7675;
 }
 
-/* --- 1. THE ULTIMATE MOBILE SCROLL KILLER --- */
-* {
-    box-sizing: border-box; /* Keeps padding/borders inside the width */
-    -webkit-tap-highlight-color: transparent;
-}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 html, body {
-    overflow-x: hidden !important; /* Total lock on horizontal scroll */
-    width: 100% !important;
-    position: relative;
-    margin: 0;
-    padding: 0;
-    background-color: transparent; /* Allows Blogger background to show */
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: var(--text);
-    touch-action: pan-y; /* Allows vertical scrolling, kills horizontal wiggle */
+    margin: 0; padding: 0;
+    overflow-x: hidden !important;
+    width: 100%; height: 100%;
+    background: #0f1418; /* Matches tool background for seamless look */
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
-/* --- 2. THE MAIN CONTAINER --- */
+body { padding: 10px; padding-bottom: 100px; /* Space for sticky button */ }
+
 .app-container {
-    width: 100%;
-    max-width: 500px;
+    max-width: 480px;
     margin: 0 auto;
     background: var(--dark);
     padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    overflow: hidden; /* Clips any elements that attempt to leak out */
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    position: relative;
 }
 
-/* --- 3. HEADER & STATS --- */
-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 5px;
-}
-.logo { font-size: 1.5rem; font-weight: bold; letter-spacing: 2px; }
-.logo span { color: var(--primary); }
-.badge { 
-    background: var(--accent); 
-    color: #000; 
-    padding: 4px 10px; 
-    border-radius: 5px; 
-    font-size: 0.7rem; 
-    font-weight: bold; 
-}
-.stats-bar { 
-    font-size: 0.8rem; 
-    color: var(--primary); 
-    margin: 15px 0; 
-    font-weight: 600;
-}
-
-/* --- 4. SEARCH BOX (FLEX FIX) --- */
-.search-box { 
-    display: flex; 
-    gap: 8px; 
-    margin-bottom: 20px; 
+/* AdSense Slot Styling */
+.ad-unit {
     width: 100%;
+    min-height: 50px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    border: 1px solid #333;
 }
-input#keywordInput { 
-    flex: 1; 
-    min-width: 0; /* Critical: allows input to shrink on small screens */
-    padding: 12px; 
-    border-radius: 8px; 
-    border: 1px solid #333; 
-    background: var(--darker); 
-    color: white; 
-    outline: none; 
+
+/* UI Elements */
+header { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: clamp(1.2rem, 5vw, 1.5rem); font-weight: 800; }
+.logo span { color: var(--primary); }
+.badge { background: var(--accent); color: #000; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+.stats-bar { font-size: 12px; color: var(--primary); margin: 15px 0; font-weight: bold; }
+
+/* Search Controls */
+.search-box { display: flex; gap: 10px; margin-bottom: 20px; height: 50px; }
+input { 
+    flex: 1; min-width: 0; border: 1.5px solid #333; background: var(--darker); 
+    color: white; border-radius: 10px; padding: 0 15px; outline: none; font-size: 16px; 
 }
-input#keywordInput:focus { border-color: var(--primary); }
+input:focus { border-color: var(--primary); }
 button#searchBtn { 
-    background: var(--primary); 
-    border: none; 
-    padding: 0 20px; 
-    color: white; 
-    border-radius: 8px; 
-    font-weight: bold; 
-    cursor: pointer; 
-    transition: 0.2s;
+    background: var(--primary); color: white; border: none; padding: 0 25px; 
+    border-radius: 10px; font-weight: 800; cursor: pointer; 
 }
-button#searchBtn:active { transform: scale(0.95); }
 
-/* --- 5. RESULT ITEMS & PREMIUM LOGIC --- */
+/* List Items */
 .result-item {
-    background: var(--darker);
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-left: 3px solid #333;
-    cursor: pointer;
-    overflow: hidden;
+    background: var(--darker); padding: 16px; margin-bottom: 12px;
+    border-radius: 12px; display: flex; justify-content: space-between;
+    align-items: center; border: 2px solid transparent; transition: 0.2s;
+}
+.result-item.selected { border-color: var(--primary); background: rgba(0, 184, 148, 0.05); }
+
+.premium-blur { filter: blur(6px); opacity: 0.3; user-select: none; }
+.lock-btn { 
+    background: linear-gradient(45deg, #d35400, #f39c12); 
+    border: none; color: white; width: 40px; height: 40px; border-radius: 8px; cursor: pointer;
 }
 
-.premium-blur { 
-    filter: blur(6px) !important; 
-    opacity: 0.5; 
-    user-select: none; 
-    pointer-events: none; 
-}
-
-.lock-btn {
-    background: linear-gradient(45deg, #d35400, #f39c12);
-    border: none; 
-    color: white; 
-    width: 38px; 
-    height: 38px; 
-    border-radius: 8px; 
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
-}
-
-.score-circle { 
-    width: 35px; 
-    height: 35px; 
-    border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 0.8rem; 
-    font-weight: bold; 
-}
-.grade-A { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
+.score-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; }
+.grade-A { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
 .grade-B { background: #0984e3; }
-.grade-C { background: #636e72; }
 
-/* --- 6. RADAR ANIMATION --- */
-.radar-loader { 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    padding: 30px; 
-}
-.radar-circle {
-    width: 60px; height: 60px; 
-    border: 2px solid var(--primary); 
-    border-radius: 50%;
-    position: relative; 
-    animation: pulse 1.5s infinite;
-}
-.radar-circle::after {
-    content: ''; 
-    position: absolute; 
-    width: 2px; 
-    height: 30px; 
-    background: var(--primary);
-    top: 0; 
-    left: 50%; 
-    transform-origin: bottom; 
-    animation: rotate 2s linear infinite;
+/* Sticky Footer Button */
+.copy-selected-btn {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    width: 90%; max-width: 400px; background: var(--primary);
+    color: white; border: none; padding: 18px; border-radius: 15px;
+    font-weight: 800; font-size: 14px; cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0, 184, 148, 0.4); display: none; z-index: 9999;
 }
 
-@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes pulse { 0% { transform: scale(0.9); opacity: 0.8; } 100% { transform: scale(1.2); opacity: 0; } }
-
-/* --- 7. NEWSLETTER & SAVED GEMS --- */
-.newsletter-box { 
-    background: #161d21; 
-    padding: 15px; 
-    border-radius: 10px; 
-    margin: 20px 0; 
-    border: 1px dashed var(--primary); 
-    text-align: center; 
-}
-.notify-btn { 
-    background: var(--primary); 
-    border: none; 
-    width: 100%; 
-    padding: 12px; 
-    border-radius: 8px; 
-    color: white; 
-    font-weight: bold; 
-    cursor: pointer; 
-}
-
-.saved-gem-item {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    background: rgba(255,255,255,0.03); 
-    padding: 12px; 
-    border-radius: 8px; 
-    margin-bottom: 8px;
-    border-right: 2px solid var(--primary);
-}
-
-/* --- 8. COPY TOAST --- */
 .copy-toast {
-    position: fixed; 
-    bottom: 30px; 
-    left: 50%; 
-    transform: translateX(-50%);
-    background: var(--primary); 
-    color: white; 
-    padding: 10px 20px; 
-    border-radius: 30px;
-    font-size: 0.85rem; 
-    font-weight: bold; 
-    z-index: 9999; 
-    display: none;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-/* --- 9. MOBILE RESPONSIVENESS --- */
-@media (max-width: 500px) {
-    body { padding: 0; }
-    .app-container { 
-        border-radius: 0; 
-        min-height: 100vh;
-    }
-    .result-item {
-        flex-direction: row; /* Keeps items from stacking and getting too tall */
-        padding: 12px;
-    }
+    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+    background: var(--primary); padding: 10px 25px; border-radius: 50px;
+    display: none; z-index: 10000; font-weight: bold;
 }
