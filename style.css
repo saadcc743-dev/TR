@@ -2,9 +2,7 @@
     --primary: #00b894;
     --dark: #1e272e;
     --darker: #0f1418;
-    --accent: #fdcb6e;
     --text: #ffffff;
-    --danger: #ff7675;
     --gold: linear-gradient(45deg, #d35400, #f39c12);
 }
 
@@ -15,42 +13,27 @@ body { font-family: 'Inter', sans-serif; background: transparent; color: var(--t
     padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
 }
 
-/* SEARCH AREA */
 .search-box { display: flex; gap: 8px; margin-bottom: 20px; }
 input#keywordInput { 
     flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #333; 
     background: var(--darker); color: white; outline: none; font-size: 16px;
 }
-button#searchBtn { 
-    background: var(--primary); border: none; padding: 0 20px; 
-    color: white; border-radius: 8px; font-weight: bold; cursor: pointer; 
-}
+button#searchBtn { background: var(--primary); border: none; padding: 0 20px; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-/* RESULTS ENGINE */
 .result-item {
     background: var(--darker); padding: 15px; margin-bottom: 12px;
     border-radius: 12px; display: flex; justify-content: space-between;
     align-items: center; border-left: 4px solid #333;
 }
 
-/* BLUR EFFECT */
-.premium-blur {
-    filter: blur(6px) !important;
-    opacity: 0.4;
-    pointer-events: none;
-    user-select: none;
-}
+.premium-blur { filter: blur(6px) !important; opacity: 0.4; pointer-events: none; user-select: none; }
 
-/* MOBILE FIX: Stack elements when screen is narrow */
+/* Mobile Stacking Fix */
 @media (max-width: 500px) {
     .result-item { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .result-item > div:last-child { 
-        width: 100%; display: flex; justify-content: space-between; 
-        border-top: 1px solid #333; padding-top: 10px; 
-    }
+    .result-item > div:last-child { width: 100%; display: flex; justify-content: space-between; border-top: 1px solid #333; padding-top: 10px; }
 }
 
-/* BUTTONS & GRADES */
 .score-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; }
 .grade-A { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
 .grade-B { background: #0984e3; }
@@ -59,7 +42,7 @@ button#searchBtn {
 .lock-btn { background: var(--gold); border: none; color: white; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; }
 .save-btn { background: none; border: 1px solid #444; color: #aaa; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; }
 
-/* ANIMATION */
+/* Radar Animation */
 .radar-loader { text-align: center; padding: 30px; }
 .radar-circle {
     width: 40px; height: 40px; border: 2px solid var(--primary); border-radius: 50%;
