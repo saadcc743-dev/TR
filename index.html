@@ -3,19 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TubeRadar Pro</title>
+    <title>TubeRadar Pro App</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="app-container">
-        <div class="ad-unit top-ad">
-            <span style="font-size: 10px; color: #555;">ADVERTISEMENT</span>
-            </div>
-
         <header>
             <div class="logo">TUBE<span>RADAR</span></div>
-            <div class="badge">LIVE 2026</div>
+            <div class="badge">SATELLITE</div>
         </header>
 
         <div class="stats-bar" id="liveCount">● CONNECTING...</div>
@@ -27,12 +23,19 @@
 
         <div id="resultsContainer"></div>
 
-        <button id="copySelectedBtn" class="copy-selected-btn" onclick="copySelectedToClipboard()">
-            COPY SELECTED NICHES
-        </button>
+        <div class="saved-gems">
+            <div class="saved-header">
+                <span>RESEARCH BIN</span>
+            </div>
+            <div id="alertsList"></div>
+        </div>
     </div>
-
+    
     <div id="copyToast" class="copy-toast">Niches Copied!</div>
+    <button id="copySelectedBtn" class="copy-selected-btn" onclick="copySelectedToClipboard()">
+        COPY SELECTED NICHES
+    </button>
+
     <script src="script.js"></script>
 </body>
 </html>
