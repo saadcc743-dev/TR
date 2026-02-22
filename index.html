@@ -36,11 +36,14 @@
         <div class="saved-gems">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <span style="font-size:0.8rem; font-weight:bold;">RESEARCH BIN</span>
-                <button class="export-btn" onclick="window.exportCSV()">CSV</button>
+                <button onclick="window.exportCSV()" style="background:#444; border:none; color:white; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:0.7rem;">CSV</button>
             </div>
             <div id="alertsList"></div>
         </div>
     </div>
+
+    <div id="copyToast" class="copy-toast">Copied to Clipboard!</div>
+
     <script src="script.js"></script>
 </body>
 </html>
