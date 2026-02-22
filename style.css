@@ -8,180 +8,123 @@
     --premium-gold: linear-gradient(45deg, #d35400, #f39c12);
 }
 
-/* --- CRITICAL MOBILE SCROLL FIX --- */
+/* THE MOBILE FIX (Surgical - only prevents side scroll) */
 html, body {
-    overflow-x: hidden; /* Prevents the 'ghost' sidebar scroll */
-    width: 100%;
+    overflow-x: hidden !important;
+    width: 100% !important;
     margin: 0;
     padding: 0;
     position: relative;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
     background-color: transparent;
     color: var(--text);
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    padding: 10px;
 }
 
-/* --- BASE & LAYOUT --- */
+/* RESTORED PREMIUM CONTAINER */
 .app-container {
-    max-width: 550px;
-    margin: 15px auto;
+    max-width: 500px;
+    margin: auto;
     background: var(--dark);
     padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.05);
-    box-sizing: border-box; /* Ensures padding doesn't increase width */
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-sizing: border-box;
 }
 
-/* --- HEADER & NAVIGATION --- */
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.logo { font-size: 1.4rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+/* RESTORED HEADER */
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.logo { font-size: 1.5rem; font-weight: 800; color: #fff; }
 .logo span { color: var(--primary); }
 
-.close-btn { display: none; } 
-
-@media (max-width: 992px) {
-    .close-btn { 
-        display: block; 
-        position: absolute; 
-        top: 15px; 
-        right: 15px; 
-        background: none; 
-        border: none; 
-        color: #fff; 
-        font-size: 1.8rem; 
-        cursor: pointer; 
-    }
-}
-
-/* --- SEARCH & INPUT --- */
-.search-box { display: flex; gap: 10px; margin-bottom: 25px; }
-input#keywordInput { 
-    flex: 1; 
-    padding: 14px; 
-    border-radius: 10px; 
-    border: 1px solid #333; 
+/* RESTORED SEARCH BOX (The sleek version) */
+.search-box { 
+    display: flex; 
+    gap: 10px; 
     background: var(--darker); 
-    color: white; 
-    outline: none;
-    transition: 0.3s;
-    width: 100%; /* Force width within flex */
+    padding: 6px; 
+    border-radius: 12px; 
+    border: 1px solid #333; 
 }
-input#keywordInput:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 184, 148, 0.2); }
-
+input#keywordInput { 
+    flex: 1; background: none; border: none; padding: 12px; color: white; outline: none; font-size: 15px;
+}
 button#searchBtn { 
-    background: var(--primary); 
-    border: none; 
-    padding: 0 25px; 
-    color: white; 
-    border-radius: 10px; 
-    font-weight: 700; 
-    cursor: pointer; 
-    transition: 0.3s;
-    white-space: nowrap;
+    background: var(--primary); border: none; padding: 0 20px; color: white; border-radius: 10px; font-weight: 800; cursor: pointer;
 }
-button#searchBtn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-/* --- THE BLUR & RESULTS ENGINE --- */
+/* RESTORED RESULT CARDS */
 .result-item {
     background: var(--darker);
     padding: 16px;
-    margin-bottom: 12px;
-    border-radius: 12px;
+    margin-top: 15px;
+    border-radius: 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-left: 4px solid #333;
-    animation: slideUp 0.4s ease forwards;
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
+/* THE PREMIUM BLUR */
 .premium-blur {
-    filter: blur(6px) !important;
+    filter: blur(7px) !important;
+    opacity: 0.4;
     user-select: none;
     pointer-events: none;
-    opacity: 0.6;
-    transition: filter 0.5s ease;
 }
 
+/* THE STYLISH LOCK BUTTON */
 .lock-btn {
     background: var(--premium-gold);
     border: none;
-    color: #fff;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(211, 84, 0, 0.4);
+    box-shadow: 0 5px 15px rgba(211, 84, 0, 0.4);
+    display: flex; align-items: center; justify-content: center;
 }
 
-/* --- SCORE SYSTEM --- */
-.score-circle { 
-    width: 38px; 
-    height: 38px; 
-    border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 0.85rem; 
-    font-weight: 800; 
-}
-.grade-A { background: var(--primary); box-shadow: 0 0 12px rgba(0, 184, 148, 0.4); }
+/* RESTORED SCORE SYSTEM */
+.score-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; }
+.grade-A { background: var(--primary); box-shadow: 0 0 15px rgba(0, 184, 148, 0.4); }
 .grade-B { background: #0984e3; }
 .grade-C { background: #636e72; }
 
-/* --- RADAR ANIMATION --- */
-.radar-loader { text-align: center; padding: 40px 0; overflow: hidden; }
+/* RESTORED RADAR ANIMATION */
+.radar-loader { text-align: center; padding: 40px; }
 .radar-circle {
-    width: 70px; height: 70px; border: 3px solid var(--primary); border-radius: 50%;
+    width: 60px; height: 60px; border: 3px solid var(--primary); border-radius: 50%;
     margin: 0 auto; position: relative; animation: pulse 1.5s infinite;
 }
 .radar-circle::after {
-    content: ''; position: absolute; width: 3px; height: 35px; background: var(--primary);
+    content: ''; position: absolute; width: 3px; height: 30px; background: var(--primary);
     top: 0; left: 50%; transform-origin: bottom; animation: rotate 2s linear infinite;
 }
 
-/* --- SAVED GEMS SIDEBAR --- */
+/* SAVED GEMS STYLING */
 .saved-gem-item {
+    background: rgba(255,255,255,0.03);
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255,255,255,0.03);
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    border-right: 3px solid var(--primary);
+    border: 1px solid #333;
 }
-.saved-gem-item i { color: var(--danger); cursor: pointer; transition: 0.2s; }
-.saved-gem-item i:hover { transform: scale(1.3); }
 
-/* --- ANIMATIONS --- */
 @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes pulse { 0% { transform: scale(0.9); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-/* --- ADSENSE OPTIMIZATION --- */
-.newsletter-box { 
-    background: rgba(0, 184, 148, 0.05); 
-    padding: 20px; 
-    border-radius: 12px; 
-    margin: 25px 0; 
-    border: 1px dashed var(--primary); 
-    text-align: center; 
-}
-
-/* --- MOBILE SPECIFIC TWEAKS --- */
-@media (max-width: 600px) {
-    .app-container {
-        width: calc(100% - 20px);
-        margin: 10px auto;
-        padding: 15px;
-    }
-    
-    .result-item {
-        padding: 12px;
-    }
-
-    /* Prevents flex items from pushing the screen out */
-    .search-box {
-        width: 100%;
-    }
+/* MOBILE RESPONSIVENESS (Fixes the sidebar scroll) */
+@media (max-width: 500px) {
+    .app-container { width: 100%; border-radius: 0; border: none; }
+    .result-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .item-right { width: 100%; display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 10px; }
 }
