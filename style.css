@@ -7,7 +7,7 @@
     --danger: #ff7675;
 }
 
-/* --- MOBILE SCROLL FIX --- */
+/* --- CRITICAL MOBILE SCROLL FIX --- */
 html, body {
     overflow-x: hidden !important;
     width: 100% !important;
@@ -30,22 +30,20 @@ body {
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    box-sizing: border-box; /* Crucial: Keeps padding inside the width */
+    box-sizing: border-box; /* Prevents internal padding from pushing width */
 }
 
-/* Header & Badges */
 header { display: flex; justify-content: space-between; align-items: center; }
 .logo { font-size: 1.5rem; font-weight: bold; letter-spacing: 2px; }
 .logo span { color: var(--primary); }
 .badge { background: var(--accent); color: #000; padding: 4px 10px; border-radius: 5px; font-size: 0.7rem; font-weight: bold; }
 .stats-bar { font-size: 0.8rem; color: var(--primary); margin: 15px 0; }
 
-/* Search Box */
 .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
 input { flex: 1; padding: 12px; border-radius: 8px; border: none; background: var(--darker); color: white; outline: none; width: 100%; }
 button#searchBtn { background: var(--primary); border: none; padding: 0 25px; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-/* Result Items & Premium Blur */
+/* Result Items & Click to Copy */
 .result-item {
     background: var(--darker);
     padding: 15px;
@@ -55,7 +53,10 @@ button#searchBtn { background: var(--primary); border: none; padding: 0 25px; co
     justify-content: space-between;
     align-items: center;
     border-left: 3px solid #333;
+    cursor: pointer;
+    transition: 0.2s;
 }
+.result-item:active { transform: scale(0.98); }
 
 .premium-blur { 
     filter: blur(6px) !important; 
@@ -66,13 +67,7 @@ button#searchBtn { background: var(--primary); border: none; padding: 0 25px; co
 
 .lock-btn {
     background: linear-gradient(45deg, #d35400, #f39c12);
-    border: none;
-    color: white;
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
+    border: none; color: white; width: 35px; height: 35px; border-radius: 8px; cursor: pointer;
 }
 
 .score-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
@@ -80,7 +75,7 @@ button#searchBtn { background: var(--primary); border: none; padding: 0 25px; co
 .grade-B { background: #0984e3; }
 .grade-C { background: #636e72; }
 
-/* Radar Animation */
+/* Animation */
 .radar-loader { display: flex; flex-direction: column; align-items: center; padding: 30px; }
 .radar-circle {
     width: 60px; height: 60px; border: 2px solid var(--primary); border-radius: 50%;
@@ -94,16 +89,24 @@ button#searchBtn { background: var(--primary); border: none; padding: 0 25px; co
 @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.5; } 100% { transform: scale(1.1); opacity: 0; } }
 
-/* Newsletter & Saved Gems */
 .newsletter-box { background: #161d21; padding: 15px; border-radius: 10px; margin: 20px 0; border: 1px dashed var(--primary); text-align: center; }
 .notify-btn { background: var(--primary); border: none; width: 100%; padding: 10px; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; }
-.export-btn { background: #444; border: none; color: white; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
 
 .saved-gem-item {
     display: flex; justify-content: space-between; align-items: center;
     background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 8px;
 }
 
+/* Tooltip for Copy */
+.copy-toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--primary); color: white; padding: 8px 16px; border-radius: 20px;
+    font-size: 0.8rem; font-weight: bold; z-index: 1000; display: none;
+}
+
+@media (max-width: 500px) {
+    .app-container { width: 100%; border-radius: 0; }
+}
 /* Responsive Tweaks */
 @media (max-width: 500px) {
     .app-container { width: 100%; border-radius: 0; }
