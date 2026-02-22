@@ -1,31 +1,41 @@
+/**
+ * TubeRadar Pro - Niche Scanner Logic
+ * Version: 2026.Final
+ * Features: Domain Lock, Smart Cache, Premium Blur, Hybrid Fetching
+ */
+
 const WORKER_URL = "https://tuberadar-api.tuberadar-api.workers.dev";
 const ALLOWED_DOMAINS = ["saadcc743-dev.github.io", "yourblog.blogspot.com"]; 
 let isPremium = false;
 
-// 1. Domain Lock & Kill Switch
+// 1. SECURITY: Domain Lock & Kill Switch
 (function() {
     const host = window.location.hostname;
-    if (!ALLOWED_DOMAINS.some(d => host.includes(d))) {
+    const isLocal = host === '127.0.0.1' || host === 'localhost';
+    if (!isLocal && !ALLOWED_DOMAINS.some(d => host.includes(d))) {
         const app = document.getElementById('mainApp');
-        const lock = document.getElementById('lockScreen');
-        if(app) app.style.display = 'none';
-        if(lock) lock.style.display = 'block';
-        throw new Error("Unauthorized Domain");
+        if(app) app.innerHTML = `<div style="padding:40px; text-align:center; color:#ff7675;"><h3>Security Alert</h3><p>Unauthorized Domain. Please visit the official site.</p></div>`;
+        throw new Error("Unauthorized Access");
     }
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
     loadHourlyHarvest();
     updateSavedUI();
-    // Live Pulse Simulation
-    setInterval(() => {
-        const count = 120 + Math.floor(Math.random() * 40);
-        const liveEl = document.getElementById('liveCount');
-        if(liveEl) liveEl.innerText = `● ${count} Radars Active`;
-    }, 8000);
+    // Start Live Activity Pulse
+    startLiveActivityPulse();
 });
 
-// 2. Fetch Initial Trends (With Error Handling)
+// 2. LIVE PULSE: Simulates real-time users
+function startLiveActivityPulse() {
+    setInterval(() => {
+        const count = 140 + Math.floor(Math.random() * 55);
+        const liveEl = document.getElementById('liveCount');
+        if(liveEl) liveEl.innerText = `● ${count} Radars Active`;
+    }, 10000);
+}
+
+// 3. INITIAL TRENDS: Loads "Featured" niches
 async function loadHourlyHarvest() {
     const tag = document.getElementById('updateTag');
     try {
@@ -35,26 +45,35 @@ async function loadHourlyHarvest() {
             if(tag) { tag.innerText = "LIVE"; tag.style.background = "#00b894"; }
             renderResults(data.niches.map(n => [n]));
         }
-    } catch (e) { if(tag) tag.innerText = "OFFLINE"; }
+    } catch (e) { 
+        if(tag) tag.innerText = "OFFLINE"; 
+        console.error("Initial load failed", e);
+    }
 }
 
-// 3. Optimized Search Logic with LOCAL CACHING
+// 4. THE SCAN ENGINE: With Smart 12-Hour Caching
 window.startSearch = async function() {
-    const q = document.getElementById('keywordInput').value.trim().toLowerCase();
+    const input = document.getElementById('keywordInput');
+    const q = input.value.trim().toLowerCase();
     if(!q) return;
 
     const container = document.getElementById('resultsContainer');
-    container.innerHTML = `<div class="radar-loader"><div class="radar-circle"></div><div style="margin-top:15px; font-size:0.8rem; color:#00b894; font-weight:bold;">SCANNING SATELLITES...</div></div>`;
+    // Show Radar Loader
+    container.innerHTML = `
+        <div class="radar-loader">
+            <div class="radar-circle"></div>
+            <div style="margin-top:20px; font-size:0.85rem; color:var(--primary); font-weight:700; letter-spacing:1px;">
+                SATELLITE SYNCING...
+            </div>
+        </div>`;
     
-    // --- CACHE CHECK (Saves API Quota) ---
+    // Check Cache (Prevents unnecessary API calls)
     const cacheKey = `tr_cache_${q}`;
-    const cachedData = localStorage.getItem(cacheKey);
-    if (cachedData) {
-        const parsed = JSON.parse(cachedData);
-        // If data is less than 12 hours old, use it instantly
-        if (Date.now() - parsed.timestamp < 43200000) {
-            console.log("Loading from Satellite Cache...");
-            setTimeout(() => renderResults(parsed.data.map(item => [item])), 400);
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Date.now() - parsed.timestamp < 43200000) { // 12 Hours
+            setTimeout(() => renderResults(parsed.data.map(item => [item])), 600);
             return;
         }
     }
@@ -62,19 +81,24 @@ window.startSearch = async function() {
     try {
         const res = await fetch(`${WORKER_URL}?q=${encodeURIComponent(q)}`);
         const data = await res.json();
+        
         if (data && data[1]) {
-            // Save to Cache for 12 hours
-            const cachePayload = { timestamp: Date.now(), data: data[1] };
-            localStorage.setItem(cacheKey, JSON.stringify(cachePayload));
+            // Store in Cache
+            localStorage.setItem(cacheKey, JSON.stringify({
+                timestamp: Date.now(),
+                data: data[1]
+            }));
             
-            setTimeout(() => renderResults(data[1].map(item => [item])), 800);
+            setTimeout(() => renderResults(data[1].map(item => [item])), 1000);
+        } else {
+            container.innerHTML = "<p style='text-align:center; padding:20px;'>No data found for this niche.</p>";
         }
     } catch (e) { 
-        container.innerHTML = "<p style='color:#ff7675;'>Satellite Link Interrupted. Try again.</p>"; 
+        container.innerHTML = "<p style='text-align:center; color:var(--danger); padding:20px;'>Connection lost. Re-scanning...</p>"; 
     }
 }
 
-// 4. Render Results (Improved UX)
+// 5. THE RENDERER: Handles Grade Logic and Dynamic Blur
 function renderResults(list) {
     const container = document.getElementById('resultsContainer');
     if(!container) return;
@@ -82,43 +106,53 @@ function renderResults(list) {
     
     list.forEach((item, i) => {
         const text = item[0];
-        // 2026 Grading Logic
         const words = text.split(' ').length;
-        const grade = words >= 4 ? "A+" : (words >= 3 ? "B" : "C");
-        const isLocked = (grade === "A+" && !isPremium && i > 2);
         
-        const trendIcon = grade === "A+" ? 
-            '<span class="trend-meta trend-up"><i class="fas fa-arrow-trend-up"></i> HOT</span>' : 
-            '<span class="trend-meta trend-new">STABLE</span>';
+        // 2026 Grading Algorithm
+        let grade = "C";
+        if (words >= 4) grade = "A+";
+        else if (words >= 3) grade = "B";
 
-        const div = document.createElement('div');
-        div.className = 'result-item';
-        div.innerHTML = `
-            <div style="flex:1; display:flex; align-items:center; gap:10px;">
-                <span style="${isLocked ? 'filter:blur(5px); opacity:0.5;' : ''}">${isLocked ? 'PREMIUM NICHE' : text}</span>
-                ${trendIcon}
+        // BLUR TRIGGER: Activates every time if not premium
+        const isLocked = (grade === "A+" && !isPremium && i > 1);
+        
+        const trendTag = grade === "A+" ? 
+            `<span class="trend-meta trend-up"><i class="fas fa-bolt"></i> EXPLODING</span>` : 
+            `<span class="trend-meta trend-new">STABLE</span>`;
+
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'result-item';
+        itemDiv.innerHTML = `
+            <div style="flex:1;">
+                ${trendTag}
+                <div style="font-weight:600; font-size:0.95rem; ${isLocked ? 'filter:blur(6px); opacity:0.5; user-select:none;' : ''}">
+                    ${isLocked ? 'HIDDEN PREMIUM NICHE' : text}
+                </div>
             </div>
             <div style="display:flex; align-items:center; gap:12px;">
-                <div class="score-circle grade-${grade[0]}">${grade}</div>
-                ${!isLocked ? `<button class="save-btn" onclick="saveGem('${text}')" title="Save to Research">+</button>` : `<button onclick="showRewardedAd()" class="lock-btn"><i class="fas fa-lock"></i></button>`}
+                <div class="score-circle grade-${grade.charAt(0)}">${grade}</div>
+                ${isLocked ? 
+                    `<button onclick="showRewardedAd()" class="lock-btn"><i class="fas fa-lock"></i></button>` : 
+                    `<button class="save-btn" onclick="saveGem('${text}')">+</button>`
+                }
             </div>
         `;
-        container.appendChild(div);
+        container.appendChild(itemDiv);
     });
 }
 
-// 5. Gem Management & Export
-window.saveGem = function(t) {
+// 6. STORAGE: Save/Remove Niche Gems
+window.saveGem = function(niche) {
     let gems = JSON.parse(localStorage.getItem('trGems') || "[]");
-    if(!gems.includes(t)) { 
-        gems.push(t); 
+    if(!gems.includes(niche)) { 
+        gems.push(niche); 
         localStorage.setItem('trGems', JSON.stringify(gems)); 
         updateSavedUI(); 
     }
 }
 
-window.removeGem = function(t) {
-    let gems = JSON.parse(localStorage.getItem('trGems') || "[]").filter(g => g !== t);
+window.removeGem = function(niche) {
+    let gems = JSON.parse(localStorage.getItem('trGems') || "[]").filter(g => g !== niche);
     localStorage.setItem('trGems', JSON.stringify(gems));
     updateSavedUI();
 }
@@ -127,39 +161,46 @@ function updateSavedUI() {
     const list = document.getElementById('alertsList');
     if(!list) return;
     const gems = JSON.parse(localStorage.getItem('trGems') || "[]");
-    list.innerHTML = gems.length ? gems.map(x => `
+    
+    if (gems.length === 0) {
+        list.innerHTML = `<p style="font-size:0.75rem; color:#666; text-align:center; padding:10px;">Your research bin is empty.</p>`;
+        return;
+    }
+
+    list.innerHTML = gems.map(x => `
         <div class="saved-gem-item">
-            <span>💎 ${x}</span>
-            <i class="fas fa-trash-can" onclick="removeGem('${x}')"></i>
+            <span style="font-size:0.8rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:180px;">💎 ${x}</span>
+            <i class="fas fa-trash-can" onclick="removeGem('${x}')" title="Remove"></i>
         </div>
-    `).reverse().join('') : '<p style="font-size:0.75rem; color:#666; text-align:center;">No gems saved yet.</p>';
+    `).reverse().join('');
 }
 
+// 7. EXPORT: Download CSV for creators
 window.exportCSV = function() {
     const gems = JSON.parse(localStorage.getItem('trGems') || "[]");
-    if(!gems.length) return alert("Save some niches first!");
-    const csvContent = "data:text/csv;charset=utf-8,Niche Research List\n" + gems.join("\n");
+    if(gems.length === 0) return alert("Save some niche ideas first!");
+    
+    const csvContent = "data:text/csv;charset=utf-8,TubeRadar Research Export\nNiche Name\n" + gems.join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `tuberadar_${Date.now()}.csv`);
+    link.setAttribute("download", `tuberadar_export_${new Date().toLocaleDateString()}.csv`);
     document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
 }
 
-window.showRewardedAd = function() { 
-    // This is the trigger for your AdSense Rewarded Ad integration
-    const conf = confirm("Watch a short ad to unlock A+ Premium results?");
-    if(conf) {
-        alert("Premium Access Granted for this session!"); 
-        isPremium = true; 
+// 8. MONETIZATION: AdSense Reward Hook
+window.showRewardedAd = function() {
+    // This function acts as the bridge for AdSense for Search / Rewarded Video
+    const confirmUnlock = confirm("Unlock all A+ Premium results by watching a short sponsorship?");
+    if(confirmUnlock) {
+        // Here you would normally trigger the AdSense Rewarded API
+        // For now, we simulate success:
+        isPremium = true;
+        alert("Success! Premium Niches Unlocked for this session.");
+        
+        // Re-render the current search to show unblurred results
         startSearch(); 
     }
 }
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'tuberadar-research.csv'; a.click();
-}
-
-window.subscribeAlert = function() { window.open("https://forms.google.com/your-form-link", "_blank"); }
-window.showRewardedAd = function() { alert("Premium Unlocked!"); isPremium = true; document.getElementById('unlockBtn').style.display='none'; loadHourlyHarvest(); }
