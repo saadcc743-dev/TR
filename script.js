@@ -5,7 +5,7 @@
  */
 
 const WORKER_URL = "https://tuberadar-api.tuberadar-api.workers.dev";
-const ALLOWED_DOMAINS = ["saadcc743-dev.github.io", "yourblog.blogspot.com"]; 
+const ALLOWED_DOMAINS = ["saadcc743-dev.github.io", "quickpromptget.blogspot.com"]; 
 let isPremium = false;
 
 // 1. SECURITY: Domain Lock & Kill Switch
