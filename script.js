@@ -156,3 +156,55 @@ window.showRewardedAd = function() {
         startSearch(); 
     }
 }
+    });
+}
+
+// 5. Gem Management & Export
+window.saveGem = function(t) {
+    let gems = JSON.parse(localStorage.getItem('trGems') || "[]");
+    if(!gems.includes(t)) { 
+        gems.push(t); 
+        localStorage.setItem('trGems', JSON.stringify(gems)); 
+        updateSavedUI(); 
+    }
+}
+
+window.removeGem = function(t) {
+    let gems = JSON.parse(localStorage.getItem('trGems') || "[]").filter(g => g !== t);
+    localStorage.setItem('trGems', JSON.stringify(gems));
+    updateSavedUI();
+}
+
+function updateSavedUI() {
+    const list = document.getElementById('alertsList');
+    if(!list) return;
+    const gems = JSON.parse(localStorage.getItem('trGems') || "[]");
+    list.innerHTML = gems.length ? gems.map(x => `
+        <div class="saved-gem-item">
+            <span>💎 ${x}</span>
+            <i class="fas fa-trash-can" onclick="removeGem('${x}')"></i>
+        </div>
+    `).reverse().join('') : '<p style="font-size:0.75rem; color:#666; text-align:center;">No gems saved yet.</p>';
+}
+
+window.exportCSV = function() {
+    const gems = JSON.parse(localStorage.getItem('trGems') || "[]");
+    if(!gems.length) return alert("Save some niches first!");
+    const csvContent = "data:text/csv;charset=utf-8,Niche Research List\n" + gems.join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `tuberadar_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+}
+
+window.showRewardedAd = function() { 
+    // This is the trigger for your AdSense Rewarded Ad integration
+    const conf = confirm("Watch a short ad to unlock A+ Premium results?");
+    if(conf) {
+        alert("Premium Access Granted for this session!"); 
+        isPremium = true; 
+        startSearch(); 
+    }
+}
