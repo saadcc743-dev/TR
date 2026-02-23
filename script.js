@@ -1,10 +1,25 @@
 const WORKER_URL = "https://tuberadar-api.tuberadar-api.workers.dev";
 let isPremium = false;
 let selectedNiches = new Set();
+let lastSearchResults = []; // Cache to allow instant unblur without re-fetching
 
-// Auto-Load Initial Niches on Start
+// --- 1. DOMAIN LOCK ---
+const authorizedDomains = ["quickpromptget.blogspot.com", "github.io", "localhost"];
+const isAuthorized = authorizedDomains.some(domain => window.location.hostname.includes(domain));
+
+if (!isAuthorized) {
+    document.body.innerHTML = `
+        <div style="background:#0f1418; color:white; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; text-align:center; padding:20px;">
+            <h1 style="color:#ff7675;">403 - Unauthorized Domain</h1>
+            <p>This tool is protected. Please visit the official site:</p>
+            <a href="https://quickpromptget.blogspot.com" style="color:#00b894; font-weight:bold; text-decoration:none; border:1px solid #00b894; padding:10px 20px; border-radius:8px;">Go to TubeRadar Pro</a>
+        </div>`;
+}
+
+// --- 2. INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     const startupNiches = ["AI Faceless Channels 2026", "Budget Solo Travel Guides", "Passive Income Micro-SaaS", "Aesthetic Desk Setups"];
+    lastSearchResults = startupNiches;
     renderResults(startupNiches);
     
     // Live Pulse Simulation
@@ -16,13 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSavedGems();
 });
 
+// --- 3. SEARCH LOGIC ---
 window.startSearch = async function() {
     const q = document.getElementById('keywordInput').value.trim();
     if(!q) return;
 
-    // --- ADDED THIS LINE ---
-    isPremium = false; // This ensures every NEW search starts as locked (blurred)
-
+    isPremium = false; // RESET lock for every new search term
     const container = document.getElementById('resultsContainer');
     container.innerHTML = `<div style="text-align:center; padding:20px; color:#00b894;">Scanning satellites...</div>`;
 
@@ -30,19 +44,21 @@ window.startSearch = async function() {
         const res = await fetch(`${WORKER_URL}?q=${encodeURIComponent(q)}`);
         const data = await res.json();
         if (data && data[1]) {
+            lastSearchResults = data[1]; // Cache results
             selectedNiches.clear();
             updateCopyBtn();
             renderResults(data[1]);
         }
     } catch (e) {
-        // Fallback for testing if Worker is down
-        const fallback = [`${q} automation`, `${q} for beginners 2026`, `profitable ${q} ideas`, `secret ${q} strategy`];
+        const fallback = [`${q} automation`, `${q} for beginners 2026`, `profitable ${q} ideas` ];
+        lastSearchResults = fallback;
         selectedNiches.clear();
         updateCopyBtn();
         renderResults(fallback);
     }
 }
 
+// --- 4. RENDERING ENGINE ---
 function renderResults(list) {
     const container = document.getElementById('resultsContainer');
     container.innerHTML = '';
@@ -85,46 +101,91 @@ function renderResults(list) {
     });
 }
 
-// Monetization
+// --- 5. UNLOCK SYSTEM ---
 window.unlockViaAd = function() {
     if(confirm("Watch a short Ad to unlock all Grade A+ Premium Niches?")) {
+        // Logic: Set premium true and re-render the CACHED results instantly
         setTimeout(() => {
             isPremium = true;
-            // Get current keywords to refresh the list without triggering startSearch's reset
-            const q = document.getElementById('keywordInput').value.trim();
-            
-            // Re-render the existing list with isPremium = true
-            // Instead of re-fetching, we just look at the container's current state 
-            // or simply force the UI to refresh.
-            // The easiest way is to re-run the render logic.
-            const currentItems = Array.from(document.querySelectorAll('.result-item')).map(item => {
-                // This grabs the text or the locked text
-                return item.innerText.split('\n')[0].trim();
-            });
-            
-            // Just re-run startSearch to be clean, but we wrap the reset logic 
-            // so we don't fetch twice unnecessarily.
-            forceUnlockRender(); 
+            renderResults(lastSearchResults); // Instant unblur without fetching
         }, 1000);
     }
 }
 
-// Helper to refresh UI after ad without clearing isPremium
-function forceUnlockRender() {
-    // This looks for the keywords again but DOES NOT reset isPremium to false
-    const q = document.getElementById('keywordInput').value.trim();
-    // We call fetch again OR you could save the last data in a variable.
-    // For simplicity, we just trigger the search again but keep the 'isPremium' state
-    renderCurrentDataUnblurred();
+// --- 6. RESEARCH BIN & FAB ---
+window.toggleBin = function() {
+    const bin = document.getElementById('researchSidebar');
+    bin.classList.toggle('active');
 }
 
-async function renderCurrentDataUnblurred() {
-    const q = document.getElementById('keywordInput').value.trim();
-    const res = await fetch(`${WORKER_URL}?q=${encodeURIComponent(q)}`);
-    const data = await res.json();
-    if (data && data[1]) {
-        renderResults(data[1]);
+window.saveGem = function(text) {
+    let gems = JSON.parse(localStorage.getItem('trGems') || "[]");
+    if(!gems.includes(text)) {
+        gems.push(text);
+        localStorage.setItem('trGems', JSON.stringify(gems));
+        loadSavedGems();
     }
 }
 
-// ... Rest of your Clipboard and Research Bin Logic remains unchanged ...
+window.removeGem = function(index) {
+    let gems = JSON.parse(localStorage.getItem('trGems') || "[]");
+    gems.splice(index, 1);
+    localStorage.setItem('trGems', JSON.stringify(gems));
+    loadSavedGems();
+}
+
+window.copyBinToClipboard = function() {
+    const gems = JSON.parse(localStorage.getItem('trGems') || "[]");
+    const textToCopy = gems.join('\n');
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        const btn = document.getElementById('copyBinBtn');
+        btn.innerText = "COPIED! ✅";
+        setTimeout(() => btn.innerText = "COPY ALL", 2000);
+    });
+}
+
+function loadSavedGems() {
+    const list = document.getElementById('alertsList');
+    const badge = document.getElementById('binCountBadge');
+    const gems = JSON.parse(localStorage.getItem('trGems') || "[]");
+    
+    if(badge) badge.innerText = gems.length;
+
+    let html = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <span style="font-size:0.8rem; font-weight:bold; color:#888;">RESEARCH BIN</span>
+            ${gems.length > 0 ? `<button id="copyBinBtn" onclick="copyBinToClipboard()">COPY ALL</button>` : ''}
+        </div>
+    `;
+
+    if(gems.length === 0) {
+        html += `<div style="text-align:center; padding:20px; color:#555; font-size:0.8rem;">Your bin is empty.</div>`;
+    } else {
+        html += gems.map((x, i) => `
+            <div class="saved-item">
+                <span>💎 ${x}</span>
+                <span class="bin-remove-btn" onclick="removeGem(${i})">&times;</span>
+            </div>
+        `).reverse().join('');
+    }
+    list.innerHTML = html;
+}
+
+// --- 7. UTILS ---
+function updateCopyBtn() {
+    const btn = document.getElementById('copySelectedBtn');
+    btn.style.display = selectedNiches.size > 0 ? 'block' : 'none';
+    btn.innerText = `COPY ${selectedNiches.size} SELECTED NICHES`;
+}
+
+window.copySelectedToClipboard = function() {
+    const textToCopy = Array.from(selectedNiches).join('\n');
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        const toast = document.getElementById('copyToast');
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 2000);
+        selectedNiches.clear();
+        updateCopyBtn();
+        document.querySelectorAll('.result-item').forEach(el => el.classList.remove('selected'));
+    });
+}
