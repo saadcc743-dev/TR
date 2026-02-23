@@ -20,6 +20,9 @@ window.startSearch = async function() {
     const q = document.getElementById('keywordInput').value.trim();
     if(!q) return;
 
+    // --- ADDED THIS LINE ---
+    isPremium = false; // This ensures every NEW search starts as locked (blurred)
+
     const container = document.getElementById('resultsContainer');
     container.innerHTML = `<div style="text-align:center; padding:20px; color:#00b894;">Scanning satellites...</div>`;
 
@@ -47,7 +50,7 @@ function renderResults(list) {
     list.forEach((text, i) => {
         const words = text.split(' ').length;
         const grade = words >= 4 ? "A+" : "B";
-        const isLocked = (grade === "A+" && !isPremium && i > 0); // Locks A+ after the 1st result
+        const isLocked = (grade === "A+" && !isPremium && i > 0); 
         
         const div = document.createElement('div');
         div.className = `result-item ${selectedNiches.has(text) ? 'selected' : ''}`;
@@ -85,51 +88,43 @@ function renderResults(list) {
 // Monetization
 window.unlockViaAd = function() {
     if(confirm("Watch a short Ad to unlock all Grade A+ Premium Niches?")) {
-        // Trigger your AdSense Rewarded logic here
         setTimeout(() => {
             isPremium = true;
-            window.startSearch(); // Re-run search unblurred
+            // Get current keywords to refresh the list without triggering startSearch's reset
+            const q = document.getElementById('keywordInput').value.trim();
+            
+            // Re-render the existing list with isPremium = true
+            // Instead of re-fetching, we just look at the container's current state 
+            // or simply force the UI to refresh.
+            // The easiest way is to re-run the render logic.
+            const currentItems = Array.from(document.querySelectorAll('.result-item')).map(item => {
+                // This grabs the text or the locked text
+                return item.innerText.split('\n')[0].trim();
+            });
+            
+            // Just re-run startSearch to be clean, but we wrap the reset logic 
+            // so we don't fetch twice unnecessarily.
+            forceUnlockRender(); 
         }, 1000);
     }
 }
 
-// Clipboard Logic
-function updateCopyBtn() {
-    const btn = document.getElementById('copySelectedBtn');
-    btn.style.display = selectedNiches.size > 0 ? 'block' : 'none';
-    btn.innerText = `COPY ${selectedNiches.size} SELECTED NICHES`;
+// Helper to refresh UI after ad without clearing isPremium
+function forceUnlockRender() {
+    // This looks for the keywords again but DOES NOT reset isPremium to false
+    const q = document.getElementById('keywordInput').value.trim();
+    // We call fetch again OR you could save the last data in a variable.
+    // For simplicity, we just trigger the search again but keep the 'isPremium' state
+    renderCurrentDataUnblurred();
 }
 
-window.copySelectedToClipboard = function() {
-    const textToCopy = Array.from(selectedNiches).join('\n');
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        const toast = document.getElementById('copyToast');
-        toast.style.display = 'block';
-        setTimeout(() => toast.style.display = 'none', 2000);
-        
-        // Clear selection after copy
-        selectedNiches.clear();
-        updateCopyBtn();
-        document.querySelectorAll('.result-item').forEach(el => el.classList.remove('selected'));
-    });
-}
-
-// Research Bin Logic
-window.saveGem = function(text) {
-    let gems = JSON.parse(localStorage.getItem('trGems') || "[]");
-    if(!gems.includes(text)) {
-        gems.push(text);
-        localStorage.setItem('trGems', JSON.stringify(gems));
-        loadSavedGems();
+async function renderCurrentDataUnblurred() {
+    const q = document.getElementById('keywordInput').value.trim();
+    const res = await fetch(`${WORKER_URL}?q=${encodeURIComponent(q)}`);
+    const data = await res.json();
+    if (data && data[1]) {
+        renderResults(data[1]);
     }
 }
 
-function loadSavedGems() {
-    const list = document.getElementById('alertsList');
-    const gems = JSON.parse(localStorage.getItem('trGems') || "[]");
-    if(gems.length === 0) { list.innerHTML = "<div style='color:#555; font-size:0.8rem;'>Bin is empty.</div>"; return; }
-    
-    list.innerHTML = gems.map(x => `
-        <div class="saved-item">💎 ${x}</div>
-    `).reverse().join('');
-}
+// ... Rest of your Clipboard and Research Bin Logic remains unchanged ...
