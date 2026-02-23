@@ -23,15 +23,18 @@
 
         <div id="resultsContainer"></div>
 
-        <div class="saved-gems">
-            <div class="saved-header">
-                <span>RESEARCH BIN</span>
-            </div>
+        <div class="saved-gems" id="researchSidebar">
             <div id="alertsList"></div>
         </div>
     </div>
     
+    <button id="mobileBinToggle" onclick="toggleBin()">
+        <i class="fas fa-gem"></i>
+        <span id="binCountBadge">0</span>
+    </button>
+
     <div id="copyToast" class="copy-toast">Niches Copied!</div>
+    
     <button id="copySelectedBtn" class="copy-selected-btn" onclick="copySelectedToClipboard()">
         COPY SELECTED NICHES
     </button>
