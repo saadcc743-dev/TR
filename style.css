@@ -13,13 +13,13 @@ html, body {
     margin: 0; padding: 0;
     width: 100%; max-width: 100vw;
     overflow-x: hidden !important;
-    background: transparent; /* Lets Blogger background show through */
+    background: transparent; 
     font-family: 'Segoe UI', system-ui, sans-serif;
     color: var(--text);
     touch-action: pan-y;
 }
 
-body { padding: 15px; padding-bottom: 90px; } /* Bottom padding for sticky button */
+body { padding: 15px; padding-bottom: 90px; }
 
 .app-container {
     width: 100%; max-width: 500px;
@@ -55,29 +55,80 @@ button#searchBtn { background: var(--primary); border: none; padding: 0 20px; co
 }
 .result-item.selected { border-color: var(--primary); background: rgba(0, 184, 148, 0.1); }
 
-.premium-blur { filter: blur(6px); opacity: 0.4; user-select: none; }
-.lock-btn { background: linear-gradient(45deg, #d35400, #f39c12); border: none; color: white; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; }
+/* --- BLUR SYSTEM --- */
+.premium-blur { 
+    filter: blur(6px); 
+    opacity: 0.4; 
+    user-select: none; 
+    pointer-events: none; /* Prevents clicking through the blur */
+}
+
+.lock-btn { 
+    background: linear-gradient(45deg, #d35400, #f39c12); 
+    border: none; color: white; width: 35px; height: 35px; 
+    border-radius: 8px; cursor: pointer; 
+}
 
 .score-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
 .grade-A { background: var(--primary); color: white; }
 .grade-B { background: #0984e3; color: white; }
 .grade-C { background: #636e72; color: white; }
 
+/* --- MOBILE FAB & SIDEBAR --- */
+#mobileBinToggle {
+    position: fixed; bottom: 20px; right: 20px;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--primary); color: white;
+    border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    z-index: 1002; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+}
+
+#binCountBadge {
+    position: absolute; top: 0; right: 0;
+    background: var(--danger); color: white;
+    font-size: 0.7rem; padding: 2px 6px; border-radius: 10px;
+    border: 2px solid var(--dark);
+}
+
+@media (max-width: 768px) {
+    .saved-gems {
+        position: fixed; right: -100%; bottom: 90px;
+        width: 90%; max-width: 350px;
+        background: var(--dark); border: 1px solid #333;
+        border-radius: 15px; transition: 0.3s ease;
+        z-index: 999; padding: 15px;
+        box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+    }
+    .saved-gems.active { right: 20px; }
+}
+
 /* Sticky Button & Toast */
 .copy-selected-btn {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    width: 90%; max-width: 400px; background: var(--primary); color: white;
+    width: 70%; max-width: 300px; background: var(--primary); color: white;
     border: none; padding: 15px; border-radius: 12px; font-weight: 800;
     cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     display: none; z-index: 1000;
 }
+
 .copy-toast {
     position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
     background: white; color: black; padding: 10px 20px; border-radius: 20px;
     font-size: 0.9rem; font-weight: bold; display: none; z-index: 1001;
 }
 
-/* Saved Gems */
-.saved-gems { margin-top: 30px; border-top: 1px solid #333; padding-top: 15px; }
-.saved-header { font-size: 0.8rem; font-weight: bold; color: #888; margin-bottom: 10px; }
-.saved-item { background: #0a0e12; padding: 10px; border-radius: 6px; margin-bottom: 5px; font-size: 0.85rem; border-left: 2px solid var(--primary); }
+/* Saved Items Layout */
+.saved-item { 
+    background: var(--darker); padding: 10px; border-radius: 6px; 
+    margin-bottom: 8px; font-size: 0.85rem; border-left: 3px solid var(--primary);
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+.bin-remove-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 5px; }
+
+#copyBinBtn {
+    background: var(--primary); color: white; border: none;
+    padding: 5px 10px; border-radius: 5px; font-size: 0.7rem;
+    font-weight: bold; cursor: pointer;
+}
