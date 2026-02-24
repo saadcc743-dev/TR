@@ -7,52 +7,72 @@
     --danger: #ff7675;
 }
 
-/* --- THE MOBILE LAYOUT (REVERTED TO "GOOD" VERSION) --- */
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+/* --- THE CANVAS FIX --- */
+* { box-sizing: border-box !important; -webkit-tap-highlight-color: transparent; }
 
 html, body {
     margin: 0; padding: 0;
     width: 100%; max-width: 100vw;
     overflow-x: hidden !important;
-    background: transparent; 
+    background: #000; 
     font-family: 'Segoe UI', system-ui, sans-serif;
     color: var(--text);
 }
 
-body { padding: 15px; padding-bottom: 90px; }
+body { padding: 10px; padding-bottom: 90px; }
 
 .app-container {
-    width: 100%; max-width: 500px;
+    width: 100%; max-width: 480px;
     margin: 0 auto;
     background: var(--dark);
-    padding: 20px; border-radius: 15px;
+    padding: 15px; border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    overflow: hidden;
+    overflow: hidden; /* This keeps everything inside the container */
 }
 
-/* UI Elements */
 header { display: flex; justify-content: space-between; align-items: center; }
-.logo { font-size: 1.5rem; font-weight: 800; }
+.logo { font-size: 1.4rem; font-weight: 800; }
 .logo span { color: var(--primary); }
 .badge { background: var(--accent); color: #000; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-.stats-bar { font-size: 0.8rem; color: var(--primary); margin: 15px 0; font-weight: bold; }
+.stats-bar { font-size: 0.75rem; color: var(--primary); margin: 10px 0; font-weight: bold; }
 
-/* --- SEARCH BOX (STABLE VERSION) --- */
-.search-box { display: flex; gap: 8px; margin-bottom: 20px; width: 100%; }
-input { 
-    flex: 1; min-width: 0; padding: 12px; border-radius: 8px; border: 1px solid #333; 
-    background: var(--darker); color: white; outline: none; font-size: 16px;
+/* --- THE "NOT FIXED" SEARCH BOX REPAIR --- */
+.search-box { 
+    display: flex !important; 
+    width: 100% !important; 
+    gap: 5px; 
+    margin-bottom: 20px;
 }
+
+input#keywordInput { 
+    width: 70% !important; /* Fixed percentage to prevent overflow */
+    min-width: 0 !important; 
+    padding: 12px; 
+    border-radius: 8px; 
+    border: 1px solid #333; 
+    background: var(--darker); 
+    color: white; 
+    font-size: 16px; /* Best for mobile keyboard */
+    outline: none;
+}
+
 button#searchBtn { 
-    background: var(--primary); border: none; padding: 0 20px; 
-    color: white; border-radius: 8px; font-weight: bold; cursor: pointer; 
+    width: 30% !important; /* Fixed percentage to keep it in canvas */
+    background: var(--primary); 
+    border: none; 
+    color: white; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
 }
 
-/* Result Items */
+/* --- RESULTS & ITEMS --- */
 .result-item {
-    background: var(--darker); padding: 15px; margin-bottom: 10px;
+    background: var(--darker); padding: 14px; margin-bottom: 10px;
     border-radius: 10px; display: flex; justify-content: space-between;
-    align-items: center; border: 2px solid transparent; cursor: pointer;
+    align-items: center; border: 2px solid transparent; width: 100%;
 }
 .result-item.selected { border-color: var(--primary); background: rgba(0, 184, 148, 0.1); }
 
@@ -60,52 +80,45 @@ button#searchBtn {
 .premium-blur { filter: blur(6px); opacity: 0.4; user-select: none; pointer-events: none; }
 .lock-btn { background: linear-gradient(45deg, #d35400, #f39c12); border: none; color: white; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; }
 
-.score-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
+.score-circle { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
 .grade-A { background: var(--primary); color: white; }
 .grade-B { background: #0984e3; color: white; }
 
-/* --- FIXED COPY BUTTON & FAB --- */
+/* --- STICKY BUTTONS --- */
 #mobileBinToggle {
     position: fixed; bottom: 20px; right: 20px;
-    width: 60px; height: 60px; border-radius: 50%;
+    width: 55px; height: 55px; border-radius: 50%;
     background: var(--primary); color: white;
-    border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-    z-index: 1002; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    z-index: 1002; display: flex; align-items: center; justify-content: center;
 }
 
 #binCountBadge {
     position: absolute; top: 0; right: 0;
-    background: var(--danger); color: white;
-    font-size: 0.7rem; padding: 2px 6px; border-radius: 10px;
-    border: 2px solid var(--dark);
+    background: var(--danger); font-size: 0.7rem; padding: 2px 5px; border-radius: 10px;
 }
 
 .copy-selected-btn {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    width: 70%; max-width: 300px; background: var(--primary); color: white;
+    width: 80%; max-width: 300px; background: var(--primary); color: white;
     border: none; padding: 15px; border-radius: 12px; font-weight: 800;
-    cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-    display: none; z-index: 1000;
+    z-index: 1000; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
 }
 
 .copy-toast {
-    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%);
     background: white; color: black; padding: 10px 20px; border-radius: 20px;
     font-size: 0.9rem; font-weight: bold; display: none; z-index: 1001;
 }
 
-/* Research Bin Sidebar */
+/* Bin Sidebar */
 @media (max-width: 768px) {
     .saved-gems {
-        position: fixed; right: -100%; bottom: 90px;
-        width: 90%; max-width: 350px;
-        background: var(--dark); border: 1px solid #333;
-        border-radius: 15px; transition: 0.3s ease;
-        z-index: 999; padding: 15px;
+        position: fixed; right: -100%; bottom: 85px;
+        width: 90%; background: var(--dark); border: 1px solid #333;
+        border-radius: 15px; transition: 0.3s ease; z-index: 999; padding: 15px;
     }
-    .saved-gems.active { right: 20px; }
+    .saved-gems.active { right: 5%; }
 }
 
-.saved-item { background: var(--darker); padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--primary); }
+.saved-item { background: var(--darker); padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
 .bin-remove-btn { color: var(--danger); cursor: pointer; font-weight: bold; }
