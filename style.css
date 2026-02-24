@@ -7,135 +7,105 @@
     --danger: #ff7675;
 }
 
-/* --- THE MOBILE SCROLL & CANVAS FIX --- */
-* { 
-    box-sizing: border-box; 
-    -webkit-tap-highlight-color: transparent; 
-}
+/* --- THE MOBILE LAYOUT (REVERTED TO "GOOD" VERSION) --- */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 html, body {
     margin: 0; padding: 0;
-    width: 100%; 
-    overflow-x: hidden !important; /* Prevents horizontal scrolling */
-    background: #000; 
+    width: 100%; max-width: 100vw;
+    overflow-x: hidden !important;
+    background: transparent; 
     font-family: 'Segoe UI', system-ui, sans-serif;
     color: var(--text);
 }
 
-body { 
-    padding: 10px; 
-    padding-bottom: 120px; 
-}
+body { padding: 15px; padding-bottom: 90px; }
 
 .app-container {
-    width: 100%; 
-    max-width: 500px;
+    width: 100%; max-width: 500px;
     margin: 0 auto;
     background: var(--dark);
-    padding: 15px; /* Reduced for better mobile fit */
-    border-radius: 18px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-    overflow: hidden; /* Keeps everything inside the canvas */
+    padding: 20px; border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    overflow: hidden;
 }
 
-/* --- SEARCH BOX MOBILE CANVAS FIX --- */
-.search-box { 
-    display: flex; 
-    gap: 8px; 
-    margin-bottom: 20px; 
-    width: 100%; /* Forces it to respect container width */
-}
-
-input { 
-    flex: 1; 
-    min-width: 0; /* CRITICAL: Allows input to shrink to fit mobile */
-    padding: 12px; 
-    border-radius: 10px; 
-    border: 1px solid #333; 
-    background: var(--darker); 
-    color: white; 
-    outline: none; 
-    font-size: 16px; /* Prevents iOS auto-zoom */
-}
-
-button#searchBtn { 
-    flex-shrink: 0; /* Prevents the scan button from squishing */
-    background: var(--primary); 
-    border: none; 
-    padding: 0 18px; 
-    color: white; 
-    border-radius: 10px; 
-    font-weight: 800; 
-    cursor: pointer; 
-    font-size: 0.9rem;
-}
-
-/* Header & Stats */
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-.logo { font-size: 1.4rem; font-weight: 900; }
+/* UI Elements */
+header { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.5rem; font-weight: 800; }
 .logo span { color: var(--primary); }
-.badge { background: var(--accent); color: #000; padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; }
-.stats-bar { font-size: 0.7rem; color: var(--primary); margin-bottom: 15px; font-weight: bold; }
+.badge { background: var(--accent); color: #000; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+.stats-bar { font-size: 0.8rem; color: var(--primary); margin: 15px 0; font-weight: bold; }
+
+/* --- SEARCH BOX (STABLE VERSION) --- */
+.search-box { display: flex; gap: 8px; margin-bottom: 20px; width: 100%; }
+input { 
+    flex: 1; min-width: 0; padding: 12px; border-radius: 8px; border: 1px solid #333; 
+    background: var(--darker); color: white; outline: none; font-size: 16px;
+}
+button#searchBtn { 
+    background: var(--primary); border: none; padding: 0 20px; 
+    color: white; border-radius: 8px; font-weight: bold; cursor: pointer; 
+}
 
 /* Result Items */
 .result-item {
-    background: var(--darker); padding: 14px; margin-bottom: 10px;
-    border-radius: 12px; display: flex; justify-content: space-between;
+    background: var(--darker); padding: 15px; margin-bottom: 10px;
+    border-radius: 10px; display: flex; justify-content: space-between;
     align-items: center; border: 2px solid transparent; cursor: pointer;
 }
-.result-item.selected { 
-    border-color: var(--primary); 
-    background: rgba(0, 184, 148, 0.12);
-}
+.result-item.selected { border-color: var(--primary); background: rgba(0, 184, 148, 0.1); }
 
 /* Premium Blur */
-.premium-blur { filter: blur(7px); opacity: 0.35; user-select: none; pointer-events: none; }
-.lock-btn { 
-    background: linear-gradient(45deg, #d35400, #f39c12); 
-    border: none; color: white; width: 36px; height: 36px; 
-    border-radius: 8px; cursor: pointer; 
-}
+.premium-blur { filter: blur(6px); opacity: 0.4; user-select: none; pointer-events: none; }
+.lock-btn { background: linear-gradient(45deg, #d35400, #f39c12); border: none; color: white; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; }
 
-.score-circle { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; }
+.score-circle { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; }
 .grade-A { background: var(--primary); color: white; }
 .grade-B { background: #0984e3; color: white; }
 
-/* Sticky Copy Button */
-.copy-selected-btn {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-    width: 90%; max-width: 400px; 
-    background: linear-gradient(135deg, #00b894, #00d3a9);
-    color: white; border: none; padding: 18px; border-radius: 50px;
-    font-weight: 800; font-size: 1rem; cursor: pointer;
-    box-shadow: 0 10px 30px rgba(0, 184, 148, 0.4);
-    z-index: 9999; display: none;
-    text-transform: uppercase;
-}
-
-/* FAB */
+/* --- FIXED COPY BUTTON & FAB --- */
 #mobileBinToggle {
-    position: fixed; bottom: 30px; right: 20px;
-    width: 55px; height: 55px; border-radius: 50%;
-    background: var(--darker); border: 2px solid var(--primary); color: white;
-    z-index: 10000; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    position: fixed; bottom: 20px; right: 20px;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--primary); color: white;
+    border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    z-index: 1002; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
 }
+
 #binCountBadge {
-    position: absolute; top: -2px; right: -2px;
-    background: var(--danger); font-size: 0.7rem; padding: 2px 6px; border-radius: 10px;
+    position: absolute; top: 0; right: 0;
+    background: var(--danger); color: white;
+    font-size: 0.7rem; padding: 2px 6px; border-radius: 10px;
+    border: 2px solid var(--dark);
 }
 
-/* Saved Items Layout */
-.saved-gems { background: var(--dark); border: 1px solid #333; border-radius: 15px; padding: 15px; margin-top: 20px; }
-@media (max-width: 768px) {
-    .saved-gems { position: fixed; right: -105%; bottom: 100px; width: 90%; transition: 0.3s; z-index: 9998; }
-    .saved-gems.active { right: 5%; }
+.copy-selected-btn {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    width: 70%; max-width: 300px; background: var(--primary); color: white;
+    border: none; padding: 15px; border-radius: 12px; font-weight: 800;
+    cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    display: none; z-index: 1000;
 }
-.saved-item { background: var(--darker); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--primary); font-size: 0.85rem; }
-.bin-remove-btn { color: var(--danger); cursor: pointer; font-weight: bold; }
 
-/* Toast */
 .copy-toast {
-    position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
-    background: var(--primary); color: white; padding: 15px 30px;
-    border-radius: 50px; font-weight: bold; z-index: 10001; display: none;
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    background: white; color: black; padding: 10px 20px; border-radius: 20px;
+    font-size: 0.9rem; font-weight: bold; display: none; z-index: 1001;
 }
+
+/* Research Bin Sidebar */
+@media (max-width: 768px) {
+    .saved-gems {
+        position: fixed; right: -100%; bottom: 90px;
+        width: 90%; max-width: 350px;
+        background: var(--dark); border: 1px solid #333;
+        border-radius: 15px; transition: 0.3s ease;
+        z-index: 999; padding: 15px;
+    }
+    .saved-gems.active { right: 20px; }
+}
+
+.saved-item { background: var(--darker); padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--primary); }
+.bin-remove-btn { color: var(--danger); cursor: pointer; font-weight: bold; }
